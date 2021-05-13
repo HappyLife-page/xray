@@ -36,7 +36,7 @@ systemctl start nginx
 
 
 ##安装acme,并申请加密证书
-ssl_dir="`mkdir -p /usr/local/etc/xray/ssl`"
+ssl_dir="`mkdir -pv /usr/local/etc/xray/ssl | awk -F"'" 'END{print $2}'`"
 source ~/.bashrc
 curl  https://get.acme.sh | sh
 ~/.acme.sh/acme.sh --issue -d "$domainName" --alpn -k ec-256
