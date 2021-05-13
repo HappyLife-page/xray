@@ -89,6 +89,7 @@ echo '
     "inbounds": [
         {
             "port": '$xrayPort',
+	    "listen": "127.0.0.1",
             "protocol": "vless",
             "settings": {
                 "clients": [
