@@ -6,8 +6,8 @@
 
 xray安装：
 
-执行curl -s https://raw.githubusercontent.com/HappyLife-page/v2ray/main/xray_installation_vless_xtls.sh | bash -s "你的解析好的域名"
-EG： curl -s https://raw.githubusercontent.com/HappyLife-page/v2ray/main/xray_installation_vless_xtls.sh | bash -s kty.v2ray.one
+执行curl -s https://raw.githubusercontent.com/HappyLife-page/xray/main/xray_installation_vless_xtls.sh | bash -s "你的解析好的域名"
+EG： curl -s https://raw.githubusercontent.com/HappyLife-page/xray/main/xray_installation_vless_xtls.sh | bash -s kty.v2ray.one
 
 vultr 5美元机器只需要不到30s部署完成
 
