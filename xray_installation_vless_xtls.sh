@@ -40,6 +40,7 @@ systemctl start nginx
 ssl_dir="/usr/local/etc/xray/ssl";! [ -d $ssl_dir ] && mkdir -p $ssl_dir
 source ~/.bashrc
 curl  https://get.acme.sh | sh
+~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 ~/.acme.sh/acme.sh --issue -d "$domainName" --alpn -k ec-256
 ~/.acme.sh/acme.sh --installcert -d "$domainName" --fullchainpath $ssl_dir/xray.crt --keypath $ssl_dir/xray.key --ecc
 
