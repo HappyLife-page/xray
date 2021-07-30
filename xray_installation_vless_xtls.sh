@@ -2,7 +2,7 @@
 # Auth: happylife
 # Desc: xray installation script
 # Plat: ubuntu 18.04+
-# Eg  : bash xray_installation_vless_xtls.sh "你的域名" "自定义端口即可"
+# Eg  : bash xray_installation_vless_xtls.sh "你的域名"
 
 ##安装依赖包
 apt update
