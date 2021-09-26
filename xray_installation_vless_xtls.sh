@@ -6,7 +6,7 @@
 
 ##安装依赖包
 apt update
-apt install curl pwgen openssl netcat cron socat -y
+apt install curl pwgen openssl netcat cron -y
 
 domainName="$1"
 xrayPort="`shuf -i 20000-49000 -n 1`"
