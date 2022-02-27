@@ -4,9 +4,10 @@
 # Plat: ubuntu 18.04+
 # Eg  : bash xray_installation_vless_xtls.sh "你的域名"
 
-##安装依赖包
+##安装依赖包，关闭防火墙ufw
 apt update
 apt install curl pwgen openssl netcat cron -y
+ufw disable
 
 domainName="$1"
 xrayPort="`shuf -i 20000-49000 -n 1`"
