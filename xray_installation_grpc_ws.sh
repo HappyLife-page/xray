@@ -112,9 +112,9 @@ echo '
     "error": "/var/log/xray/error.log",
     "loglevel": "warning"
   },
-  "inbound": [
+  "inbounds": [
     {
-	  "listen": '"\"$ws_sock\""',	
+    "listen": '"\"$ws_sock\""',	
       "protocol": "vless",
       "settings": {
         "decryption":"none",
@@ -131,9 +131,9 @@ echo '
           "path": '"\"$ws_path\""'
         }
       }
-	},
+    },
     {
-	  "listen": '"\"$grpc_sock\""',
+    "listen": '"\"$grpc_sock\""',
       "protocol": "vless",
       "settings": {
         "decryption":"none",
