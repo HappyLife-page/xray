@@ -168,18 +168,6 @@ echo '
     }
   ],
   "routing": {
-      "domainStrategy": "IPIfNonMatch",
-      "rules": [
-        {
-            "ip": [
-                "geoip:cn"
-            ],
-            "outboundTag": "blocked",
-            "type": "field"
-        }
-      ]
-  },
-  "routing": {
     "strategy": "rules",
     "settings": {
       "decryption":"none",
