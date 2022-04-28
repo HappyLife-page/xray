@@ -209,5 +209,5 @@ echo "
 协议	: vless
 UUID	: $uuid
 WS路径	: $ws_path
-grpc路径: $ws_path
+grpc路径: $grpc_path
 " | tee $xray_config_info
