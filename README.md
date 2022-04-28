@@ -1,16 +1,22 @@
 # xray纯净安装，基于手动纯净部署命令的整理，内容一目了然。你可以理解为你手动执行时的每一个复制粘贴和修改文件的命令的合集，批处理而已
 # 一分钟xray：vless+tcp+xtls+nginx
+# 
 # xray 一键安装，只需30s
 
 解析好域名
 
-xray安装：
+## xray单独xtls安装：
 
-执行curl -s https://raw.githubusercontent.com/HappyLife-page/xray/main/xray_installation_vless_xtls.sh | bash -s "你的解析好的域名"
+#执行curl -s https://raw.githubusercontent.com/HappyLife-page/xray/main/xray_installation_vless_xtls.sh | bash -s "你的解析好的域名"
 # EG： 
 curl -s https://raw.githubusercontent.com/HappyLife-page/xray/main/xray_installation_vless_xtls.sh | bash -s kty.v2ray.one
 
+## xray grpc与ws安装
+#执行 curl -s https://raw.githubusercontent.com/HappyLife-page/xray/main/xray_installation_grpc_ws.sh | bash -s "你的解析好的域名"
+# EG:
+curl -s https://raw.githubusercontent.com/HappyLife-page/xray/main/xray_installation_grpc_ws.sh | bash -s "xray.v2ray.one"
 
+#
 vultr 5美元机器只需要不到30s部署完成 【https://www.vultr.com/?ref=8773909】
 
 你完全不需要任何干预，一键执行脚本稍等片刻就好
