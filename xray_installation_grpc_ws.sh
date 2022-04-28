@@ -89,18 +89,18 @@ server {
 		proxy_http_version 1.1;
 		proxy_set_header Upgrade "'"$http_upgrade"'";
 		proxy_set_header Connection '"'upgrade'"';
-        proxy_set_header Host '$host';
-        proxy_set_header X-Real-IP '$remote_addr';
-        proxy_set_header X-Forwarded-For '$proxy_add_x_forwarded_for';
+   	     	proxy_set_header Host "'"$host"'";
+       	 	proxy_set_header X-Real-IP "'"$remote_addr"'";
+        	proxy_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";
 	}
 	location "$grpc_path" {
 		proxy_redirect off;
 		client_max_body_size 0;
 		client_body_timeout 1h;
 		grpc_read_timeout 1h;
-		grpc_set_header X-Real-IP $remote_addr;
+		grpc_set_header X-Real-IP "'"$remote_addr"'";
 		grpc_pass grpc://unix:"$grpc_sock";
-	}	
+	}
 }
 " > /etc/nginx/conf.d/xray.conf
 
@@ -202,6 +202,7 @@ systemctl status xray
 /usr/sbin/nginx -t && systemctl restart nginx
 
 ##输出配置信息
+xray_config_info="/root/xray_config.info"
 echo "
 域名	: $domainName
 端口	: 443
@@ -209,4 +210,4 @@ echo "
 UUID	: $uuid
 WS路径	: $ws_path
 grpc路径: $ws_path
-"
+" | tee $xray_config_info
