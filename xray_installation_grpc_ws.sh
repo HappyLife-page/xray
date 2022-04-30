@@ -95,9 +95,6 @@ server {
 	}
 	location "$grpc_path" {
 		proxy_redirect off;
-		client_max_body_size 0;
-		client_body_timeout 1h;
-		grpc_read_timeout 1h;
 		grpc_set_header X-Real-IP "'"$remote_addr"'";
 		grpc_pass grpc://unix:"$grpc_sock";
 	}
