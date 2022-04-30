@@ -28,9 +28,9 @@ domainName="$1"
 # 2.随机生成一个uuid
 uuid="`uuidgen`"
 # 3.随机生成一个ws需要使用的path
-ws_path="/`pwgen -A0 6 8 | xargs |sed 's/ /\//g'`"
+ws_path="/`pwgen -A0 8 6 | xargs |sed 's/ /\//g'`"
 # 4.随机生成一个grpc需要使用的path
-grpc_path="/$(pwgen -scny -r "\!@#$%^&*()-+={}[]|:\";',/?><\`~" 56 1)"
+grpc_path="$(pwgen -scny -r "\!@#$%^&*()-+={}[]|:\";',/?><\`~" 56 1)"
 # 5.创建ws和grpc需要用的sock目录,并授权nginx用户权限
 sock_dir="/run/xray";! [ -d $sock_dir ] && mkdir -pv $sock_dir && chown www-data.www-data $sock_dir
 # 5.定义ws sock位置
@@ -93,7 +93,7 @@ server {
        	 	proxy_set_header X-Real-IP "'"$remote_addr"'";
         	proxy_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";
 	}
-	location "$grpc_path" {
+	location "/$grpc_path" {
 		proxy_redirect off;
 		grpc_set_header X-Real-IP "'"$remote_addr"'";
 		grpc_pass grpc://unix:"$grpc_sock";
