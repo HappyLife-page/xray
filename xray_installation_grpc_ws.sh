@@ -95,7 +95,9 @@ server {
 	}
 	location "/$grpc_path" {
 		proxy_redirect off;
+		grpc_set_header Host "'"$host"'";
 		grpc_set_header X-Real-IP "'"$remote_addr"'";
+		grpc_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";
 		grpc_pass grpc://unix:"$grpc_sock";
 	}
 }
