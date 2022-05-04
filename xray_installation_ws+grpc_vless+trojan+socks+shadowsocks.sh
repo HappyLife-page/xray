@@ -435,37 +435,38 @@ echo "
 -----------1. vless+ws -----------
 协议	: vless
 UUID	: $uuid
-WS路径	: $vless_ws_path
+路径	: $vless_ws_path
 -----------2. trojan+ws -----------
 协议	: trojan
 密码	: $trojan_passwd
-WS路径	: $trojan_ws_path
+路径	: $trojan_ws_path
 -----------3. socks+ws ------------
 协议	: socks
 用户	：$socks_user	
 密码	: $socks_passwd
-WS路径	: $socks_ws_path
+路径	: $socks_ws_path
 -------- 4. shadowsocks+ws ---------
 协议	: shadowsocks
 密码	: $shadowsocks_passwd
 加密	：AES-128-GCM
-WS路径	: $shadowsocks_ws_path
+路径	: $shadowsocks_ws_path
+
 ------------ gRPC传输 -----------
 ------------5. vless+grpc -----------
 协议	: vless
 UUID	: $uuid
-WS路径	: $vless_grpc_path
+路径	: $vless_grpc_path
 -----------6. trojan+grpc -----------
 协议	: trojan
 密码	: $trojan_passwd
-WS路径	: $trojan_grpc_path
+路径	: $trojan_grpc_path
 -----------7. socks+grpc ------------
 协议	: socks
 密码	: $socks_passwd
-WS路径	: $socks_grpc_path
+路径	: $socks_grpc_path
 --------8. shadowsocks+grpc ---------
 协议	: shadowsocks
 密码	: $shadowsocks_passwd
 加密	：AES-128-GCM
-WS路径	: $shadowsocks_grpc_path
+路径	: $shadowsocks_grpc_path
 " | tee $xray_config_info
