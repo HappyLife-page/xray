@@ -1,10 +1,10 @@
 #!/bin/bash
 # Auth: happylife
-# Desc: v2ray installation script
-# 	ws+vless,ws+trojan,ws+socks,ws+shadowsocks
-#	grpc+vless,grpc+trojan,grpc+socks,grpc+shadowsocks
+# Desc: xray installation script
+# 	    ws+vless,ws+trojan,ws+socks,ws+shadowsocks
+#	      grpc+vless,grpc+trojan,grpc+socks,grpc+shadowsocks
 # Plat: ubuntu 18.04+
-# Eg  : bash v2ray_installation_ws+grpc_vless+trojan+socks+shadowsocks.sh "你的域名"
+# Eg  : bash xray_installation_ws+grpc_vless+trojan+socks+shadowsocks.sh "你的域名"
 
 if [ -z "$1" ];then
 	echo "域名不能为空"
@@ -59,7 +59,7 @@ socks_grpc_path="$(pwgen -1scn 12)$(pwgen -1scny -r "\!@#$%^&*()-+={}[]|:\";',/?
 shadowsocks_grpc_path="$(pwgen -1scn 12)$(pwgen -1scny -r "\!@#$%^&*()-+={}[]|:\";',/?><\`~" 36)"
 
 # 5.创建需要用的domainSock目录,并授权nginx用户权限
-domainSock_dir="/run/v2ray";! [ -d $domainSock_dir ] && mkdir -pv $domainSock_dir
+domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir -pv $domainSock_dir
 chown www-data.www-data $domainSock_dir
 
 # 5.定义需要用到的domainSock文件名
@@ -72,19 +72,8 @@ trojan_grpc_domainSock="${domainSock_dir}/trojan_grpc.sock"
 ssl_dir="$(mkdir -pv "/etc/nginx/ssl/`date +"%F-%H-%M-%S"`" |awk -F"'" END'{print $2}')"
 
 
-# 使用v2ray官方命令安装v2ray并修改用户为www-data和重新加载服务文件
-# 1.官方命令安装v2ray
-curl -O https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh
-curl -O https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-dat-release.sh
-bash install-release.sh
-bash install-dat-release.sh
-# 2.修改v2ray日志目录权限为www-data
-chown -R www-data.www-data /var/log/v2ray
-# 3.修改v2ray默认用户为www-data
-sed -i '/User=nobody/cUser=www-data' /etc/systemd/system/v2ray.service
-sed -i '/User=nobody/cUser=www-data' /etc/systemd/system/v2ray@.service
-# 4.重新加载v2ray服务文件
-systemctl daemon-reload
+# 使用xray官方命令安装xray并指定www-data为运行用户
+bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data
 
 
 ##安装acme,并申请加密证书
@@ -93,8 +82,8 @@ if nc -z localhost 443;then /etc/init.d/nginx stop;fi
 if ! [ -d /root/.acme.sh ];then curl https://get.acme.sh | sh;fi
 ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 ~/.acme.sh/acme.sh --issue -d "$domainName" -k ec-256 --alpn
-~/.acme.sh/acme.sh --installcert -d "$domainName" --fullchainpath $ssl_dir/v2ray.crt --keypath $ssl_dir/v2ray.key --ecc
-chown www-data.www-data $ssl_dir/v2ray.*
+~/.acme.sh/acme.sh --installcert -d "$domainName" --fullchainpath $ssl_dir/xray.crt --keypath $ssl_dir/xray.key --ecc
+chown www-data.www-data $ssl_dir/xray.*
 
 ## 把续签证书命令添加到计划任务
 echo -n '#!/bin/bash
@@ -106,7 +95,7 @@ chmod +x /usr/local/bin/ssl_renew.sh
 if ! grep -q 'ssl_renew.sh' /var/spool/cron/crontabs/root;then (crontab -l;echo "15 03 */3 * * /usr/local/bin/ssl_renew.sh") | crontab;fi
 
 
-# 配置nginx【如下80服务块完全可以不需要】，执行如下命令即可添加nginx配置文件
+# 配置nginx，执行如下命令即可添加nginx配置文件
 echo "
 server {
 	listen 80;
@@ -117,11 +106,12 @@ server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 	server_name "$domainName";
-	ssl_certificate $ssl_dir/v2ray.crt;
-	ssl_certificate_key $ssl_dir/v2ray.key;
+	ssl_certificate $ssl_dir/xray.crt;
+	ssl_certificate_key $ssl_dir/xray.key;
 	ssl_ciphers EECDH+CHACHA20:EECDH+CHACHA20-draft:EECDH+ECDSA+AES128:EECDH+aRSA+AES128:RSA+AES128:EECDH+ECDSA+AES256:EECDH+aRSA+AES256:RSA+AES256:EECDH+ECDSA+3DES:EECDH+aRSA+3DES:RSA+3DES:!MD5;
 	ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
 	root /usr/share/nginx/html;
+  
 	# ------------------- WS配置部分开始 -------------------
 	location = "$vless_ws_path" {
 		proxy_redirect off;
@@ -129,9 +119,9 @@ server {
 		proxy_http_version 1.1;
 		proxy_set_header Upgrade "'"$http_upgrade"'";
 		proxy_set_header Connection '"'upgrade'"';
-        	proxy_set_header Host "'"$host"'";
-        	proxy_set_header X-Real-IP "'"$remote_addr"'";
-        	proxy_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";		
+    proxy_set_header Host "'"$host"'";
+    proxy_set_header X-Real-IP "'"$remote_addr"'";
+    proxy_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";		
 	}	
 	
 	location = "$trojan_ws_path" {
@@ -140,9 +130,9 @@ server {
 		proxy_http_version 1.1;
 		proxy_set_header Upgrade "'"$http_upgrade"'";
 		proxy_set_header Connection '"'upgrade'"';
-	        proxy_set_header Host "'"$host"'";
-	        proxy_set_header X-Real-IP "'"$remote_addr"'";
-	        proxy_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";		
+	  proxy_set_header Host "'"$host"'";
+	  proxy_set_header X-Real-IP "'"$remote_addr"'";
+	  proxy_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";		
 	}	
 	
 	location = "$socks_ws_path" {
@@ -151,9 +141,9 @@ server {
 		proxy_http_version 1.1;
 		proxy_set_header Upgrade "'"$http_upgrade"'";
 		proxy_set_header Connection '"'upgrade'"';
-	        proxy_set_header Host "'"$host"'";
-	        proxy_set_header X-Real-IP "'"$remote_addr"'";
-	        proxy_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";		
+	  proxy_set_header Host "'"$host"'";
+	  proxy_set_header X-Real-IP "'"$remote_addr"'";
+	  proxy_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";		
 	}
 	
 	location = "$shadowsocks_ws_path" {
@@ -162,55 +152,55 @@ server {
 		proxy_http_version 1.1;
 		proxy_set_header Upgrade "'"$http_upgrade"'";
 		proxy_set_header Connection '"'upgrade'"';
-	        proxy_set_header Host "'"$host"'";
-	        proxy_set_header X-Real-IP "'"$remote_addr"'";
-	        proxy_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";	
+	  proxy_set_header Host "'"$host"'";
+	  proxy_set_header X-Real-IP "'"$remote_addr"'";
+	  proxy_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";	
 	}	
 	# ------------------- WS配置部分结束 -------------------
 	
 	# ------------------ gRPC配置部分开始 ------------------
 	location ^~ "/$vless_grpc_path" {
 		proxy_redirect off;
-	        grpc_set_header Host "'"$host"'";
-	        grpc_set_header X-Real-IP "'"$remote_addr"'";
-	        grpc_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";
+	  grpc_set_header Host "'"$host"'";
+	  grpc_set_header X-Real-IP "'"$remote_addr"'";
+	  grpc_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";
 		grpc_pass grpc://unix:"${vless_grpc_domainSock}";		
 	}
 	
 	location ^~ "/$trojan_grpc_path" {
 		proxy_redirect off;
-	        grpc_set_header Host "'"$host"'";
-	        grpc_set_header X-Real-IP "'"$remote_addr"'";
-	        grpc_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";
+	  grpc_set_header Host "'"$host"'";
+	  grpc_set_header X-Real-IP "'"$remote_addr"'";
+	  grpc_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";
 		grpc_pass grpc://unix:"${trojan_grpc_domainSock}";	
 	}	
 	
 	location ^~ "/$socks_grpc_path" {
 		proxy_redirect off;
-	        grpc_set_header Host "'"$host"'";
-	        grpc_set_header X-Real-IP "'"$remote_addr"'";
-	        grpc_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";
+	  grpc_set_header Host "'"$host"'";
+	  grpc_set_header X-Real-IP "'"$remote_addr"'";
+	  grpc_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";
 		grpc_pass grpc://127.0.0.1:"$socks_grpc_port";	
 	}
 	
 	location ^~ "/$shadowsocks_grpc_path" {
 		proxy_redirect off;
-	        grpc_set_header Host "'"$host"'";
-	        grpc_set_header X-Real-IP "'"$remote_addr"'";
-	        grpc_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";
+	  grpc_set_header Host "'"$host"'";
+	  grpc_set_header X-Real-IP "'"$remote_addr"'";
+	  grpc_set_header X-Forwarded-For "'"$proxy_add_x_forwarded_for"'";
 		grpc_pass grpc://127.0.0.1:"$shadowsocks_grpc_port";		
 	}	
 	# ------------------ gRPC配置部分结束 ------------------	
 	
 }
-" > /etc/nginx/conf.d/v2ray.conf
+" > /etc/nginx/conf.d/xray.conf
 
-# 配置v2ray，执行如下命令即可添加v2ray配置文件
+# 配置xray，执行如下命令即可添加xray配置文件
 echo '
 {
   "log" : {
-    "access": "/var/log/v2ray/access.log",
-    "error": "/var/log/v2ray/error.log",
+    "access": "/var/log/xray/access.log",
+    "error": "/var/log/xray/error.log",
     "loglevel": "warning"
   },
   "inbounds": [
@@ -221,8 +211,8 @@ echo '
 			"decryption":"none",
 			"clients": [
 				{
-				"id": '"\"$uuid\""',
-				"level": 1
+          "id": '"\"$uuid\""',
+          "level": 1
 				}
 			]
 		},
@@ -395,23 +385,23 @@ echo '
     }
   ],
   "routing": {
-      "domainStrategy": "IPIfNonMatch",
-      "rules": [
-        {
-          "domain": [
-              "geosite:cn"
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "domain": [
+            "geosite:cn"
+        ],
+        "outboundTag": "blocked",
+        "type": "field"
+      },      
+      {
+          "ip": [
+              "geoip:cn"
           ],
           "outboundTag": "blocked",
           "type": "field"
-        },      
-        {
-            "ip": [
-                "geoip:cn"
-            ],
-            "outboundTag": "blocked",
-            "type": "field"
-        }
-      ]
+      }
+    ]
   },  
   "routing": {
     "strategy": "rules",
@@ -427,16 +417,16 @@ echo '
     }
   }
 }
-' > /usr/local/etc/v2ray/config.json
+' > /usr/local/etc/xray/config.json
 
 # 重启xray和nginx
-systemctl restart v2ray
-systemctl status v2ray
+systemctl restart xray
+systemctl status xray
 /usr/sbin/nginx -t && systemctl restart nginx
 
 
 # 输出配置信息并保存到文件
-v2ray_config_info="/root/v2ray_config.info"
+xray_config_info="/root/xray_config.info"
 echo "
 ----------- 所有连接方式统一域名和端口 -----------
 域名	: $domainName
@@ -478,4 +468,4 @@ WS路径	: $socks_grpc_path
 密码	: $shadowsocks_passwd
 加密	：AES-128-GCM
 WS路径	: $shadowsocks_grpc_path
-" | tee $v2ray_config_info
+" | tee $xray_config_info
