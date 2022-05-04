@@ -44,31 +44,31 @@ socks_user="$(pwgen -1cns 9)"
 socks_passwd="$(pwgen -1cnys -r "'\";:$\\" 16)"
 shadowsocks_passwd="$(pwgen -1cnys -r "'\";:$\\" 16)"
 
-# 使用WS配置vless,trojan,socks,shadowsocks协议
-# 3.分别随机生成vless,trojan,socks,shadowsocks需要使用的ws的path
+# 5.使用WS配置vless,trojan,socks,shadowsocks协议
+# 分别随机生成vless,trojan,socks,shadowsocks需要使用的ws的path
 vless_ws_path="/`pwgen -csn 6 8 | xargs |sed 's/ /\//g'`"
 trojan_ws_path="/`pwgen -csn 6 8 | xargs |sed 's/ /\//g'`"
 socks_ws_path="/`pwgen -csn 6 8 | xargs |sed 's/ /\//g'`"
 shadowsocks_ws_path="/`pwgen -csn 6 8 | xargs |sed 's/ /\//g'`"
 
-# 使用gRPC配置vless,trojan,socks,shadowsocks协议
-# 4.分别随机生成vless,trojan,socks,shadowsocks需要使用的grpc的path
+# 6.使用gRPC配置vless,trojan,socks,shadowsocks协议
+# 分别随机生成vless,trojan,socks,shadowsocks需要使用的grpc的path
 vless_grpc_path="$(pwgen -1scn 12)$(pwgen -1scny -r "\!@#$%^&*()-+={}[]|:\";',/?><\`~" 36)"
 trojan_grpc_path="$(pwgen -1scn 12)$(pwgen -1scny -r "\!@#$%^&*()-+={}[]|:\";',/?><\`~" 36)"
 socks_grpc_path="$(pwgen -1scn 12)$(pwgen -1scny -r "\!@#$%^&*()-+={}[]|:\";',/?><\`~" 36)"
 shadowsocks_grpc_path="$(pwgen -1scn 12)$(pwgen -1scny -r "\!@#$%^&*()-+={}[]|:\";',/?><\`~" 36)"
 
-# 5.创建需要用的domainSock目录,并授权nginx用户权限
+# 7.创建需要用的domainSock目录,并授权nginx用户权限
 domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir -pv $domainSock_dir
 chown www-data.www-data $domainSock_dir
 
-# 5.定义需要用到的domainSock文件名
+# 8.定义需要用到的domainSock文件名
 vless_ws_domainSock="${domainSock_dir}/vless_ws.sock"
 trojan_ws_domainSock="${domainSock_dir}/trojan_ws.sock"
 vless_grpc_domainSock="${domainSock_dir}/vless_grpc.sock"
 trojan_grpc_domainSock="${domainSock_dir}/trojan_grpc.sock"
 
-# 6.以时间为基准随机创建一个存放ssl证书的目录
+# 9.以时间为基准随机创建一个存放ssl证书的目录
 ssl_dir="$(mkdir -pv "/etc/nginx/ssl/`date +"%F-%H-%M-%S"`" |awk -F"'" END'{print $2}')"
 
 
