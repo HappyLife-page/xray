@@ -101,7 +101,7 @@ server {
 systemctl daemon-reload
 systemctl enable x-ui
 systemctl restart x-ui
-nginx -t && /etc/init.d/nginx start || exit 9
+echo; nginx -t && /etc/init.d/nginx start || exit 9
 
 # 输出x-ui管理账号和密码
 echo "
