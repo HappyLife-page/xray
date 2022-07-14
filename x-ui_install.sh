@@ -14,6 +14,7 @@ ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 if ! grep -q 'LC_TIME' /etc/default/locale;then echo 'LC_TIME=en_DK.UTF-8' >> /etc/default/locale;fi
 
 # 更新Ubuntu官方源,安装curl等,关闭防火墙
+dpkg --configure -a
 apt clean all && apt update
 apt install curl tar nginx cron pwgen -y
 ufw disable
