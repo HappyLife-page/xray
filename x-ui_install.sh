@@ -58,7 +58,6 @@ curl -L https://github.com/vaxilu/x-ui/releases/download/${xui_latest_version}/x
 if cd /usr/local/x-ui;then
 	chmod +x x-ui bin/xray-linux-* x-ui.sh
 	cp -f x-ui.sh /usr/bin/x-ui
-	sed -i '/\[Service\]/aUser=www-data' x-ui.service
 	cp -f x-ui.service /etc/systemd/system/
 else
 	echo "x-ui not found"
