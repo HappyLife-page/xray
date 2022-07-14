@@ -77,7 +77,7 @@ server {
 	return 301 https://"'$host'""'$request_uri'";
 }
 server {
-	listen 443 ssl http2 default_server;
+	listen 443 ssl http2;
 	listen [::]:443 ssl http2 default_server;
 	server_name "$domainName";
 	ssl_certificate $ssl_dir/x-ui.crt;
