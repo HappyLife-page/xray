@@ -54,9 +54,10 @@ if ! grep -q 'ssl_renew.sh' /var/spool/cron/crontabs/root;then (crontab -l;echo 
 # 下载x-ui并设置服务
 curl -L https://github.com/vaxilu/x-ui/releases/download/${xui_latest_version}/x-ui-linux-amd64.tar.gz | tar xz -C /usr/local/
 if cd /usr/local/x-ui;then
-	chmod +x x-ui/x-ui x-ui/bin/xray-linux-* x-ui/x-ui.sh
-	cp x-ui/x-ui.sh /usr/bin/x-ui
-	cp -f x-ui/x-ui.service /etc/systemd/system/
+	chmod +x x-ui bin/xray-linux-* x-ui.sh
+	cp x-ui.sh /usr/bin/x-ui
+	sed -i '/\[Service\]/aUser=www-data' x-ui.service
+	cp -f x-ui.service /etc/systemd/system/
 else
 	echo "x-ui not found"
 	exit 3
