@@ -50,7 +50,7 @@ echo -n '#!/bin/bash
 /etc/init.d/nginx start
 ' > /usr/local/bin/ssl_renew.sh
 chmod +x /usr/local/bin/ssl_renew.sh
-if ! grep -q 'ssl_renew.sh' /var/spool/cron/crontabs/root;then (crontab -l;echo "15 03 */3 * * /usr/local/bin/ssl_renew.sh") | crontab;fi
+if ! grep -q 'ssl_renew.sh' /var/spool/cron/crontabs/root;then (crontab -l;echo "15 03 * * * /usr/local/bin/ssl_renew.sh") | crontab;fi
 
 # 下载x-ui并设置服务
 [ -d /usr/local/x-ui ] && rm -rf /usr/local/x-ui
