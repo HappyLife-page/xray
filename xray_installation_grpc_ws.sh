@@ -56,8 +56,8 @@ chown www-data.www-data $ssl_dir/xray.*
 ## 把申请证书命令添加到计划任务
 echo -n '#!/bin/bash
 /etc/init.d/nginx stop
-"/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" &> /root/renew_ssl.log
-/etc/init.d/nginx start
+wait;"/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" &> /root/renew_ssl.log
+wait;/etc/init.d/nginx start
 ' > /usr/local/bin/ssl_renew.sh
 chmod +x /usr/local/bin/ssl_renew.sh
 (crontab -l;echo "15 03 * * * /usr/local/bin/ssl_renew.sh") | crontab
